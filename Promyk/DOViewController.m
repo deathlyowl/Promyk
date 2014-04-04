@@ -18,7 +18,7 @@
 @interface DOViewController ()
 {
     CAShapeLayer *handSolid, *handDashed, *outerCircle;
-    UILabel *hourLabel, *angleLabel;
+    UILabel *hourLabel, *angleLabel, *verbumLabel;
 }
 
 @end
@@ -35,13 +35,19 @@ double radiansToDegrees(double radians){return radians * 180 / M_PI;}
     [self configure];
     
     hourLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 2*SMALL_UNIT, 320, 2.5*SMALL_UNIT)];
-    [hourLabel setText:@""];
     [hourLabel setFont:[UIFont fontWithName:@"ModernSans"
                                    size:50]];
     [hourLabel setTextAlignment:NSTextAlignmentCenter];
     [hourLabel.layer setOpacity:.1];
     [self.view addSubview:hourLabel];
     
+    verbumLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 5*BIG_UNIT, 320, 2.5*SMALL_UNIT)];
+    [verbumLabel setFont:[UIFont fontWithName:@"ModernSans"
+                                         size:50]];
+    [verbumLabel setTextAlignment:NSTextAlignmentCenter];
+    [verbumLabel setMinimumScaleFactor:.1];
+    [verbumLabel setAdjustsFontSizeToFitWidth:YES];
+    [self.view addSubview:verbumLabel];
     
     angleLabel = [[UILabel alloc] initWithFrame:CGRectMake(BIG_UNIT+10, 3*BIG_UNIT + SMALL_UNIT, 2*BIG_UNIT, 2.5*SMALL_UNIT)];
     [angleLabel setFont:[UIFont fontWithName:@"ModernSans"
@@ -191,6 +197,8 @@ double radiansToDegrees(double radians){return radians * 180 / M_PI;}
                                           angle > 0 ? 3*BIG_UNIT + SMALL_UNIT : 2*BIG_UNIT + SMALL_UNIT,
                                           2*BIG_UNIT,
                                           2.5*SMALL_UNIT)];
+    
+    [verbumLabel setText:@"noon in 15 minutes"];
 }
 
 @end
