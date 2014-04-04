@@ -16,24 +16,29 @@
 #define YELLOW [UIColor colorWithHue:0.16f saturation:0.51f brightness:1.00f alpha:1.00f]
 #define FONT [UIFont fontWithName:@"ModernSans" size:50]
 
-@interface DOAppDelegate : UIResponder <UIApplicationDelegate>
+#pragma mark - Classes declarations
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 
 @end
 
-@interface DOViewController : UIViewController
+@interface ViewController : UIViewController
+{
+    CAShapeLayer *handSolid, *handDashed, *innerCircle, *outerCircle;
+    UILabel *hourLabel, *angleLabel, *verbumLabel;
+}
 
 @end
 
 int main(int argc, char * argv[])
 {
     @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([DOAppDelegate class]));
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
 }
 
-@implementation DOAppDelegate
+@implementation AppDelegate
 
 @synthesize window;
 
@@ -46,7 +51,7 @@ int main(int argc, char * argv[])
     // Generate and show view
     window = UIWindow.new;
     window.frame = UIScreen.mainScreen.bounds;
-    window.rootViewController = DOViewController.new;
+    window.rootViewController = ViewController.new;
     
     [window setClipsToBounds:YES];
     
@@ -67,15 +72,7 @@ int main(int argc, char * argv[])
 
 @end
 
-@interface DOViewController ()
-{
-    CAShapeLayer *handSolid, *handDashed, *innerCircle, *outerCircle;
-    UILabel *hourLabel, *angleLabel, *verbumLabel;
-}
-
-@end
-
-@implementation DOViewController
+@implementation ViewController
 
 double degreesToRadians(double degrees){return degrees * M_PI / 180;}
 double radiansToDegrees(double radians){return radians * 180 / M_PI;}
