@@ -7,6 +7,7 @@
 
 #import <Availability.h>
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 
 #define LINE_WIDTH 8
 #define SMALL_UNIT 20
@@ -17,7 +18,10 @@
 #define FONT [UIFont fontWithName:@"ModernSans" size:50]
 
 #pragma mark - Classes declarations
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, CLLocationManagerDelegate>
+{
+    CLLocationManager *locationManager;
+}
 
 @property (strong, nonatomic) UIWindow *window;
 
@@ -56,18 +60,46 @@ int main(int argc, char * argv[])
     [window setClipsToBounds:YES];
     
     // Initialize location manager
-    /*
-     locationManager = CLLocationManager.new;
-     
-     locationManager.delegate = self;
-     locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
-     
-     [self.window makeKeyAndVisible];
-     [self locate];
-     */
+    locationManager = CLLocationManager.new;
+    locationManager.delegate = self;
+    locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
+    [self locate];
     
-    // Override point for customization after application launch.
     return YES;
+}
+
+- (void) locate
+{
+    double longitude = [[NSUserDefaults.standardUserDefaults objectForKey:@"longitude"] doubleValue];
+    double latitude = [[NSUserDefaults.standardUserDefaults objectForKey:@"longitude"] doubleValue];
+    if (longitude && latitude)
+    {
+        /*
+        [[Sun sharedObject] setLatitude:latitude];
+        [[Sun sharedObject] setLongitude:longitude];
+        [[Sun sharedObject] setIsLocated:YES];
+        [[Sun sharedObject] calculate];
+         */
+    }
+    [locationManager startUpdatingLocation];
+}
+
+- (void)locationManager:(CLLocationManager *)manager
+     didUpdateLocations:(NSArray *)locations
+{
+    NSLog(@"Located!");
+    CLLocation *location = [locations lastObject];
+ /*
+    Sun.sharedObject.latitude = location.coordinate.latitude;
+    Sun.sharedObject.longitude = location.coordinate.longitude;
+    Sun.sharedObject.isLocated = YES;
+    [Sun.sharedObject calculate];
+  */
+    [manager stopUpdatingLocation];
+    
+    [NSUserDefaults.standardUserDefaults setObject:[NSNumber numberWithDouble:location.coordinate.latitude] forKey:@"latitude"];
+    [NSUserDefaults.standardUserDefaults setObject:[NSNumber numberWithDouble:location.coordinate.longitude] forKey:@"longitude"];
+    [NSUserDefaults.standardUserDefaults synchronize];
 }
 
 @end
