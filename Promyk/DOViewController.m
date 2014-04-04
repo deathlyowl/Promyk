@@ -44,7 +44,6 @@ double radiansToDegrees(double radians){return radians * 180 / M_PI;}
     
     
     angleLabel = [[UILabel alloc] initWithFrame:CGRectMake(BIG_UNIT+10, 3*BIG_UNIT + SMALL_UNIT, 2*BIG_UNIT, 2.5*SMALL_UNIT)];
-    [angleLabel setText:@"0°"];
     [angleLabel setFont:[UIFont fontWithName:@"ModernSans"
                                         size:50]];
     [angleLabel setTextAlignment:NSTextAlignmentCenter];
@@ -63,7 +62,7 @@ double radiansToDegrees(double radians){return radians * 180 / M_PI;}
     
     NSString *separator = second % 2 ? @":" : @".";
  
-    [hourLabel setText:[NSString stringWithFormat:@"%i%@%i", hour, separator, minute]];
+    [hourLabel setText:[NSString stringWithFormat:@"%i%@%02i", hour, separator, minute]];
     
     [self setSeconds:second];
 }
@@ -142,7 +141,6 @@ double radiansToDegrees(double radians){return radians * 180 / M_PI;}
     
     // Sun
     CAShapeLayer *sun = [CAShapeLayer layer];
-    //[sun setPosition:CGPointMake(0, 0)];
     [sun setStrokeColor:YELLOW.CGColor];
     [sun setFillColor:[UIColor blackColor].CGColor];
     [sun setLineWidth:LINE_WIDTH];
@@ -175,22 +173,24 @@ double radiansToDegrees(double radians){return radians * 180 / M_PI;}
     [outerCircle setStrokeStart:0];
     [outerCircle setStrokeEnd:(float)seconds/59.];
     
-    if (seconds == 0) {
-        [self setAngle];
-    }
+    if (seconds == 0) [self setAngle];
 }
 
 - (void) setAngle
 {
-    float angle = degreesToRadians((double)(rand() % 45));
+    float angle = degreesToRadians((double)(rand() % 90)-45);
     
     [CATransaction setAnimationDuration:ANIMATION_DURATION];
-    
     CATransform3D transform = CATransform3DMakeRotation(angle, 0, 0, 1);
     
     handSolid.transform = transform;
     handDashed.transform = transform;
     [angleLabel setText:[NSString stringWithFormat:@"%.0f°", radiansToDegrees(angle)]];
+    
+    [angleLabel.layer setFrame:CGRectMake(angle > 0 ? BIG_UNIT+10 : BIG_UNIT,
+                                          angle > 0 ? 3*BIG_UNIT + SMALL_UNIT : 2*BIG_UNIT + SMALL_UNIT,
+                                          2*BIG_UNIT,
+                                          2.5*SMALL_UNIT)];
 }
 
 @end
