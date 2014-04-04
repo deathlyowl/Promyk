@@ -24,9 +24,10 @@
 #define CIVIL 6
 #define FIRST_TOUCH 0.83
 
-struct timePair {double dusk, dawn;};
+struct timePair {double up, down;};
 
 #pragma mark - C Functions
+
 double degreesToRadians(double degrees)
 {
     return degrees * M_PI / 180;
@@ -37,9 +38,14 @@ double radiansToDegrees(double radians)
     return radians * 180 / M_PI;
 }
 
+double appToJulian(double app, double anomaly, double lambda)
+{
+    return app + (0.0053 * sin(degreesToRadians(anomaly)) - (0.0069 * sin(2 * lambda)));
+}
+
 double approx(double angle, int julianCycle)
 {
-    return JULIAN_2000_JANUARY_1_NOON - angle / 360 + julianCycle;
+    return JULIAN_2000_JANUARY_1_NOON + julianCycle - (angle / 360);
 }
 
 double hourAngle(double angle, double latitude, double delta)
@@ -84,18 +90,24 @@ double solarMeanAnomaly(double J)
 @end
 
 @interface Sun : NSObject
+{
+    int counter;
+}
 
-@property (nonatomic) double sunset;
-@property (nonatomic) double sunrise;
+//@property (nonatomic) double sunset;
+//@property (nonatomic) double sunrise;
 
 @property (nonatomic) double noon;
 
 @property (nonatomic) double longitude;
 @property (nonatomic) double latitude;
 
+@property (nonatomic) struct timePair pair;
 @property (nonatomic) struct timePair astro;
 @property (nonatomic) struct timePair navi;
 @property (nonatomic) struct timePair civil;
+
+@property (nonatomic) int minAngle, maxAngle;
 
 @property (nonatomic) int stage;
 
@@ -137,7 +149,8 @@ int main(int argc, char * argv[])
     window.frame = UIScreen.mainScreen.bounds;
     window.rootViewController = ViewController.new;
     
-    [window setClipsToBounds:YES];
+    [window makeKeyAndVisible];
+    
     
     // Initialize location manager
     locationManager = CLLocationManager.new;
@@ -184,7 +197,7 @@ int main(int argc, char * argv[])
 
 @implementation Sun
 
-@synthesize sunrise, sunset, noon, astro, navi, civil,longitude, latitude, isLocated, stage;
+@synthesize pair, noon, astro, navi, civil,longitude, latitude, isLocated, stage, minAngle, maxAngle;
 
 + (Sun *) sharedObject
 {
@@ -197,19 +210,25 @@ int main(int argc, char * argv[])
     return sharedObject;
 }
 
-- (void)calculate{
+- (void)calculate
+{
+    counter = counter + 15;
     // Julian cycle
-    int julianCycle = [[NSDate date] julianCycleForLongitude:longitude];
+    NSDate *date = [NSDate dateWithTimeIntervalSinceNow:60*60*24*counter];
+    int julianCycle = [date julianCycleForLongitude:longitude];
+    double julianNow = [date julianDay];
     
+    NSLog(@"Julian now: %f [%i] at %.2fx%.2f", julianNow, julianCycle, longitude, latitude);
     
     // Solar Noon
     noon = approx(longitude, julianCycle);
-    double anomaly = solarMeanAnomaly(noon), center = equationOfCenter(anomaly), lambda = eclipticLongitude(anomaly,center);
     
+    double  anomaly = solarMeanAnomaly(noon),
+            center = equationOfCenter(anomaly),
+            lambda = eclipticLongitude(anomaly,center);
     
     double buffer = noon + 0.0053 * sin(degreesToRadians(anomaly)) - 0.0069 * sin(2*lambda);
-    
-    
+
     while (anomaly != solarMeanAnomaly(buffer))
     {
         anomaly = solarMeanAnomaly(buffer);
@@ -228,8 +247,6 @@ int main(int argc, char * argv[])
     double naviAngle = hourAngle(-NAVI, latitude, delta);
     double civilAngle = hourAngle(-CIVIL, latitude, delta);
     
-    
-    
     stage = 4;
     if (astroAngle != astroAngle)           stage = 3;
     if (naviAngle != naviAngle)             stage = 2;
@@ -241,22 +258,44 @@ int main(int argc, char * argv[])
     double lastNaviTime = approx(longitude - naviAngle, julianCycle);
     double lastCivilTime = approx(longitude - civilAngle, julianCycle);
     
+    minAngle = 0;
+    maxAngle = 0;
     
+    for (int i=90; i>-90; i--)
+    {
+        double angle = hourAngle(i, latitude, delta);
+        double downtime = appToJulian(approx(longitude - angle , julianCycle), anomaly, lambda);
+        double uptime = noon - ( downtime - noon );
+        
+        NSDate *downDate = [NSDate dateWithJulianDay:downtime];
+        NSDate *upDate = [NSDate dateWithJulianDay:uptime];
+        if (angle == angle) {
+            if (minAngle > i) minAngle = i;
+            if (maxAngle < i) maxAngle = i;
+            //NSLog(@"[%3.i] %@ — %@", i, upDate, downDate);
+        }
+    }
     
+    NSLog(@"%i to %i\t%i", minAngle, maxAngle, maxAngle - minAngle);
+
     // Sunset
-    sunset = lastTouchTime + (0.0053 * sin(degreesToRadians(anomaly)) - (0.0069 * sin(2 * lambda)));
-    sunrise = noon - ( sunset - noon );
+    pair.down = appToJulian(lastTouchTime, anomaly, lambda);
+    astro.down = appToJulian(lastAstroTime, anomaly, lambda);
+    navi.down = appToJulian(lastNaviTime, anomaly, lambda);
+    civil.down = appToJulian(lastCivilTime, anomaly, lambda);
+    pair.up = noon - ( pair.down - noon );
+    astro.up = noon - (astro.down - noon);
+    navi.up = noon - (navi.down - noon);
+    civil.up = noon - (civil.down - noon);
     
-    
-    astro.dawn = lastAstroTime + (0.0053 * sin(degreesToRadians(anomaly)) - (0.0069 * sin(2* lambda)));
-    astro.dusk = noon - (astro.dawn - noon);
-    
-    navi.dawn = lastNaviTime + (0.0053 * sin(degreesToRadians(anomaly)) - (0.0069 * sin(2* lambda)));
-    navi.dusk = noon - (navi.dawn - noon);
-    
-    civil.dawn = lastCivilTime + (0.0053 * sin(degreesToRadians(anomaly)) - (0.0069 * sin(2* lambda)));
-    civil.dusk = noon - (civil.dawn - noon);
-    NSLog(@"civil: %f | %f | %f", civil.dusk, latitude, delta);
+    // Lookup
+    NSLog(@"STAGE: %i", stage);
+    NSLog(@"NOW:\t\t %@",           [NSDate dateWithJulianDay:julianNow]);
+    NSLog(@"NOON:\t\t %@",          [NSDate dateWithJulianDay:noon]);
+    NSLog(@"NORMAL:\t\t %@ | %@",   [NSDate dateWithJulianDay:pair.up],     [NSDate dateWithJulianDay:pair.down]);
+    NSLog(@"CIVIL:\t\t %@ | %@",    [NSDate dateWithJulianDay:civil.up],    [NSDate dateWithJulianDay:civil.down]);
+    NSLog(@"NAVI:\t\t %@ | %@",     [NSDate dateWithJulianDay:navi.up],     [NSDate dateWithJulianDay:navi.down]);
+    NSLog(@"ASTRO:\t\t %@ | %@",    [NSDate dateWithJulianDay:astro.up],    [NSDate dateWithJulianDay:astro.down]);
     
     [[NSNotificationCenter defaultCenter] postNotificationName:CALCULATED
                                                         object:nil];
@@ -432,11 +471,13 @@ int main(int argc, char * argv[])
 {
     [outerCircle setStrokeStart:0];
     [outerCircle setStrokeEnd:(float)seconds/59.];
-    if (seconds == 0) [self setAngle];
+    [self setAngle];
+    //if (seconds == 0) [self setAngle];
 }
 
 - (void) setAngle
 {
+    [[Sun sharedObject] calculate];
     float angle = degreesToRadians((double)(rand() % 90)-45);
     
     [CATransaction setAnimationDuration:ANIMATION_DURATION];
@@ -451,10 +492,12 @@ int main(int argc, char * argv[])
                                           2*BIG_UNIT,
                                           2.5*SMALL_UNIT)];
     
-    [verbumLabel setText:@"twilight in 15"];
+    [verbumLabel setText:@"kill me, fast"];
     
-    float minAngle = -35;
-    float maxAngle = 45;
+    
+    
+    float minAngle = [[Sun sharedObject] minAngle];
+    float maxAngle = [[Sun sharedObject] maxAngle];
     
     float minC = minAngle / 360;
     float maxC = maxAngle / 360;
