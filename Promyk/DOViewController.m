@@ -17,7 +17,7 @@
 
 @interface DOViewController ()
 {
-    CAShapeLayer *handSolid, *handDashed, *outerCircle;
+    CAShapeLayer *handSolid, *handDashed, *innerCircle, *outerCircle;
     UILabel *hourLabel, *angleLabel, *verbumLabel;
 }
 
@@ -41,7 +41,7 @@ double radiansToDegrees(double radians){return radians * 180 / M_PI;}
     [hourLabel.layer setOpacity:.1];
     [self.view addSubview:hourLabel];
     
-    verbumLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 5*BIG_UNIT, 320, 2.5*SMALL_UNIT)];
+    verbumLabel = [[UILabel alloc] initWithFrame:CGRectMake(SMALL_UNIT, 5*BIG_UNIT, 320 - 2*SMALL_UNIT, 2.5*SMALL_UNIT)];
     [verbumLabel setFont:[UIFont fontWithName:@"ModernSans"
                                          size:50]];
     [verbumLabel setTextAlignment:NSTextAlignmentCenter];
@@ -119,16 +119,19 @@ double radiansToDegrees(double radians){return radians * 180 / M_PI;}
     [handDashed setPath:path];
     
     // Inner circle
-    CAShapeLayer *innerCircle = [CAShapeLayer layer];
+    innerCircle = [CAShapeLayer layer];
     [innerCircle setPosition:self.view.center];
     [innerCircle setStrokeColor:[UIColor blackColor].CGColor];
     [innerCircle setFillColor:[UIColor clearColor].CGColor];
     [innerCircle setLineWidth:LINE_WIDTH];
+    [innerCircle setLineCap:kCALineCapRound];
     
     [innerCircle setPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(-SMALL_UNIT * 6,
                                                                            -SMALL_UNIT * 6,
                                                                            SMALL_UNIT * 12,
                                                                            SMALL_UNIT * 12)].CGPath];
+    
+    
     // Outer circle
     outerCircle = [CAShapeLayer layer];
     [outerCircle setPosition:self.view.center];
@@ -198,7 +201,17 @@ double radiansToDegrees(double radians){return radians * 180 / M_PI;}
                                           2*BIG_UNIT,
                                           2.5*SMALL_UNIT)];
     
-    [verbumLabel setText:@"noon in 15 minutes"];
+    [verbumLabel setText:@"twilight in 15"];
+    
+    float minAngle = -45;
+    float maxAngle = 45;
+    
+    float minC = minAngle / 360;
+    float maxC = maxAngle / 360;
+    
+    [innerCircle setStrokeStart:.5 + minC];
+    [innerCircle setStrokeEnd:.5 + maxC];
+    
 }
 
 @end
