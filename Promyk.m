@@ -16,6 +16,9 @@
 #define ANIMATION_DURATION 1
 #define YELLOW [UIColor colorWithHue:0.16f saturation:0.51f brightness:1.00f alpha:1.00f]
 #define FONT [UIFont fontWithName:@"ModernSans" size:50]
+#define CALCULATED @"CalculationsDidEnd"
+
+struct timePair {double dusk, dawn;};
 
 #pragma mark - Classes declarations
 @interface AppDelegate : UIResponder <UIApplicationDelegate, CLLocationManagerDelegate>
@@ -32,6 +35,38 @@
     CAShapeLayer *handSolid, *handDashed, *innerCircle, *outerCircle;
     UILabel *hourLabel, *angleLabel, *verbumLabel;
 }
+
+@end
+
+@interface Sun : NSObject
+
+@property (nonatomic) double sunset;
+@property (nonatomic) double sunrise;
+
+@property (nonatomic) double noon;
+
+@property (nonatomic) double longitude;
+@property (nonatomic) double latitude;
+
+@property (nonatomic) struct timePair astro;
+@property (nonatomic) struct timePair navi;
+@property (nonatomic) struct timePair civil;
+
+@property (nonatomic) int stage;
+
+@property (nonatomic) BOOL isLocated;
+
+- (void) calculate;
++ (Sun *) sharedObject;
+
+@end
+
+@interface NSDate (JulianDate)
+
+- (double) julianDay;
+- (int) julianCycleForLongitude:(double)longitude;
+- (id) initWithJulianDay:(double)julian;
++ (NSDate *) dateWithJulianDay:(double) julian;
 
 @end
 
