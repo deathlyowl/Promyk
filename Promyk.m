@@ -83,16 +83,13 @@ double solarMeanAnomaly(double J)
 
 @interface ViewController : UIViewController
 {
-    CAShapeLayer *handSolid, *handDashed, *innerCircle, *outerCircle;
+    CAShapeLayer *handSolid, *handDashed, *innerCircle, *outerCircle, *sun, *centerline;
     UILabel *hourLabel, *angleLabel, *verbumLabel;
 }
 
 @end
 
 @interface Sun : NSObject
-{
-    int counter;
-}
 
 //@property (nonatomic) double sunset;
 //@property (nonatomic) double sunrise;
@@ -107,7 +104,7 @@ double solarMeanAnomaly(double J)
 @property (nonatomic) struct timePair navi;
 @property (nonatomic) struct timePair civil;
 
-@property (nonatomic) int minAngle, maxAngle;
+@property (nonatomic) int minAngle, maxAngle, angle;
 
 @property (nonatomic) int stage;
 
@@ -134,6 +131,8 @@ int main(int argc, char * argv[])
     }
 }
 
+#pragma mark - Class implementations
+
 @implementation AppDelegate
 
 @synthesize window;
@@ -141,16 +140,13 @@ int main(int argc, char * argv[])
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [application setStatusBarHidden:YES];
-    
-    application.idleTimerDisabled = YES;    // Do not fall asleep
+    [application setIdleTimerDisabled:YES];    // Do not fall asleep
     
     // Generate and show view
     window = UIWindow.new;
     window.frame = UIScreen.mainScreen.bounds;
     window.rootViewController = ViewController.new;
-    
     [window makeKeyAndVisible];
-    
     
     // Initialize location manager
     locationManager = CLLocationManager.new;
@@ -170,7 +166,6 @@ int main(int argc, char * argv[])
         [[Sun sharedObject] setLatitude:latitude];
         [[Sun sharedObject] setLongitude:longitude];
         [[Sun sharedObject] setIsLocated:YES];
-        [[Sun sharedObject] calculate];
     }
     [locationManager startUpdatingLocation];
 }
@@ -178,7 +173,6 @@ int main(int argc, char * argv[])
 - (void)locationManager:(CLLocationManager *)manager
      didUpdateLocations:(NSArray *)locations
 {
-    NSLog(@"Located!");
     CLLocation *location = [locations lastObject];
     
     Sun.sharedObject.latitude = location.coordinate.latitude;
@@ -197,7 +191,7 @@ int main(int argc, char * argv[])
 
 @implementation Sun
 
-@synthesize pair, noon, astro, navi, civil,longitude, latitude, isLocated, stage, minAngle, maxAngle;
+@synthesize pair, noon, astro, navi, civil,longitude, latitude, isLocated, stage, minAngle, maxAngle, angle;
 
 + (Sun *) sharedObject
 {
@@ -212,13 +206,9 @@ int main(int argc, char * argv[])
 
 - (void)calculate
 {
-    counter = counter + 15;
     // Julian cycle
-    NSDate *date = [NSDate dateWithTimeIntervalSinceNow:60*60*24*counter];
+    NSDate *date = [NSDate date];
     int julianCycle = [date julianCycleForLongitude:longitude];
-    double julianNow = [date julianDay];
-    
-    NSLog(@"Julian now: %f [%i] at %.2fx%.2f", julianNow, julianCycle, longitude, latitude);
     
     // Solar Noon
     noon = approx(longitude, julianCycle);
@@ -258,25 +248,39 @@ int main(int argc, char * argv[])
     double lastNaviTime = approx(longitude - naviAngle, julianCycle);
     double lastCivilTime = approx(longitude - civilAngle, julianCycle);
     
+    // Code below is extremally stupid, but works
     minAngle = 0;
     maxAngle = 0;
+    angle = 0;
+    
+    int minInterval = HUGE_VAL;
     
     for (int i=90; i>-90; i--)
     {
-        double angle = hourAngle(i, latitude, delta);
-        double downtime = appToJulian(approx(longitude - angle , julianCycle), anomaly, lambda);
+        double hAngle = hourAngle(i, latitude, delta);
+        double downtime = appToJulian(approx(longitude - hAngle , julianCycle), anomaly, lambda);
         double uptime = noon - ( downtime - noon );
         
         NSDate *downDate = [NSDate dateWithJulianDay:downtime];
         NSDate *upDate = [NSDate dateWithJulianDay:uptime];
-        if (angle == angle) {
+        
+        if (hAngle == hAngle)
+        {
+            int downInterval  = [downDate timeIntervalSinceNow];
+            int upInterval  = [upDate timeIntervalSinceNow];
+            if (abs(downInterval) < minInterval) {
+                angle = i;
+                minInterval = abs(downInterval);
+            }
+            if (abs(upInterval) < minInterval) {
+                angle = i;
+                minInterval = abs(upInterval);
+            }
+            
             if (minAngle > i) minAngle = i;
             if (maxAngle < i) maxAngle = i;
-            //NSLog(@"[%3.i] %@ — %@", i, upDate, downDate);
         }
     }
-    
-    NSLog(@"%i to %i\t%i", minAngle, maxAngle, maxAngle - minAngle);
 
     // Sunset
     pair.down = appToJulian(lastTouchTime, anomaly, lambda);
@@ -289,6 +293,7 @@ int main(int argc, char * argv[])
     civil.up = noon - (civil.down - noon);
     
     // Lookup
+    /*
     NSLog(@"STAGE: %i", stage);
     NSLog(@"NOW:\t\t %@",           [NSDate dateWithJulianDay:julianNow]);
     NSLog(@"NOON:\t\t %@",          [NSDate dateWithJulianDay:noon]);
@@ -296,7 +301,7 @@ int main(int argc, char * argv[])
     NSLog(@"CIVIL:\t\t %@ | %@",    [NSDate dateWithJulianDay:civil.up],    [NSDate dateWithJulianDay:civil.down]);
     NSLog(@"NAVI:\t\t %@ | %@",     [NSDate dateWithJulianDay:navi.up],     [NSDate dateWithJulianDay:navi.down]);
     NSLog(@"ASTRO:\t\t %@ | %@",    [NSDate dateWithJulianDay:astro.up],    [NSDate dateWithJulianDay:astro.down]);
-    
+    */
     [[NSNotificationCenter defaultCenter] postNotificationName:CALCULATED
                                                         object:nil];
 }
@@ -334,9 +339,13 @@ int main(int argc, char * argv[])
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
     [self configure];
-}
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(setAngle)
+                                                 name:CALCULATED
+                                               object:nil];
+     }
 
 - (void) tick
 {
@@ -349,20 +358,46 @@ int main(int argc, char * argv[])
     
     NSString *separator = second % 2 ? @":" : @".";
     
-    [hourLabel setText:[NSString stringWithFormat:@"%i%@%02i", hour, separator, minute]];
+    [hourLabel setText:[NSString stringWithFormat:@"%li%@%02li", (long)hour, separator, (long)minute]];
     
     [self setSeconds:second];
+}
+
+- (UIColor *) wantedBackgroundColor
+{
+    int angle = [[Sun sharedObject] angle];
+    if (angle < 0)
+    {
+        if (angle > -18)
+        {
+            float change = .25 * (abs(angle)/18.);
+            NSLog(@"chg: %f", change);
+            return [UIColor colorWithHue:.6 saturation:.5 brightness:.3 - change alpha:1];
+        }
+        return [UIColor colorWithHue:.6 saturation:.5 brightness:.05 alpha:1];
+    }
+    else if (angle == 0) return [UIColor colorWithHue:.6 saturation:.5 brightness:.3 alpha:1];
+    else if (angle < 30)
+    {
+        return [UIColor colorWithHue:.6 saturation:.5 brightness:.3 + (.7 * angle/30.) alpha:1];
+    }
+    return [UIColor colorWithHue:.16 saturation:.5 brightness:1 alpha:1];
+}
+
+- (UIColor *) wantedForegreoundColor
+{
+    return [[Sun sharedObject] angle] < 30 ? [UIColor whiteColor] : [UIColor blackColor];
 }
 
 - (void) configure
 {
     // Preparations
     [self.view.layer setCornerRadius:20];
-    [self.view setBackgroundColor:YELLOW];
+    [self.view.layer setBackgroundColor:YELLOW.CGColor];
     CGMutablePathRef path;
     
     // Centerline
-    CAShapeLayer *centerline = [CAShapeLayer layer];
+    centerline = [CAShapeLayer layer];
     [centerline setPosition:self.view.center];
     [centerline setStrokeColor:[UIColor blackColor].CGColor];
     [centerline setLineWidth:LINE_WIDTH];
@@ -426,7 +461,7 @@ int main(int argc, char * argv[])
                                                                            SMALL_UNIT * 14)].CGPath];
     
     // Sun
-    CAShapeLayer *sun = [CAShapeLayer layer];
+    sun = [CAShapeLayer layer];
     [sun setStrokeColor:YELLOW.CGColor];
     [sun setFillColor:[UIColor blackColor].CGColor];
     [sun setLineWidth:LINE_WIDTH];
@@ -463,7 +498,6 @@ int main(int argc, char * argv[])
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:YES];
-    [self setAngle];
     [[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(tick) userInfo:nil repeats:YES] fire];
 }
 
@@ -472,29 +506,26 @@ int main(int argc, char * argv[])
     [outerCircle setStrokeStart:0];
     [outerCircle setStrokeEnd:(float)seconds/59.];
     [self setAngle];
-    //if (seconds == 0) [self setAngle];
+    if (seconds == 0) [[Sun sharedObject] calculate];
 }
 
 - (void) setAngle
 {
-    [[Sun sharedObject] calculate];
-    float angle = degreesToRadians((double)(rand() % 90)-45);
+    float angle = [[Sun sharedObject] angle];
     
     [CATransaction setAnimationDuration:ANIMATION_DURATION];
-    CATransform3D transform = CATransform3DMakeRotation(angle, 0, 0, 1);
+    CATransform3D transform = CATransform3DMakeRotation(degreesToRadians(angle), 0, 0, 1);
     
     handSolid.transform = transform;
     handDashed.transform = transform;
-    [angleLabel setText:[NSString stringWithFormat:@"%.0f°", radiansToDegrees(angle)]];
+    [angleLabel setText:[NSString stringWithFormat:@"%.0f°", angle]];
     
     [angleLabel.layer setFrame:CGRectMake(angle > 0 ? BIG_UNIT+10 : BIG_UNIT,
                                           angle > 0 ? 3*BIG_UNIT + SMALL_UNIT : 2*BIG_UNIT + SMALL_UNIT,
                                           2*BIG_UNIT,
                                           2.5*SMALL_UNIT)];
     
-    [verbumLabel setText:@"kill me, fast"];
-    
-    
+    [verbumLabel setText:@"no message"];
     
     float minAngle = [[Sun sharedObject] minAngle];
     float maxAngle = [[Sun sharedObject] maxAngle];
@@ -504,6 +535,16 @@ int main(int argc, char * argv[])
     
     [innerCircle setStrokeStart:.5 + minC];
     [innerCircle setStrokeEnd:.5 + maxC];
+    
+    [self.view.layer setBackgroundColor:[self wantedBackgroundColor].CGColor];
+    [sun setStrokeColor:[self wantedBackgroundColor].CGColor];
+    [sun setFillColor:[self wantedForegreoundColor].CGColor];
+    
+    //    CAShapeLayer *handSolid, *handDashed, *innerCircle, *outerCircle, *sun, *centerline;
+
+    handSolid.strokeColor = handDashed.strokeColor = centerline.strokeColor = innerCircle.strokeColor = outerCircle.strokeColor = [self wantedForegreoundColor].CGColor;
+    
+    hourLabel.textColor = angleLabel.textColor = verbumLabel.textColor = [self wantedForegreoundColor];
 }
 
 @end
