@@ -157,6 +157,11 @@ int main(int argc, char * argv[])
     return YES;
 }
 
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+    [[Sun sharedObject] calculate];
+}
+
 - (void) locate
 {
     double longitude = [[NSUserDefaults.standardUserDefaults objectForKey:@"longitude"] doubleValue];
@@ -370,23 +375,21 @@ int main(int argc, char * argv[])
     {
         if (angle > -18)
         {
-            float change = .25 * (abs(angle)/18.);
-            NSLog(@"chg: %f", change);
-            return [UIColor colorWithHue:.6 saturation:.5 brightness:.3 - change alpha:1];
+            return [UIColor colorWithHue:.6 saturation:.5 brightness:.3 + .25 * (angle/18.) alpha:1];
         }
         return [UIColor colorWithHue:.6 saturation:.5 brightness:.05 alpha:1];
     }
     else if (angle == 0) return [UIColor colorWithHue:.6 saturation:.5 brightness:.3 alpha:1];
-    else if (angle < 30)
+    else if (angle < 45)
     {
-        return [UIColor colorWithHue:.6 saturation:.5 brightness:.3 + (.7 * angle/30.) alpha:1];
+        return [UIColor colorWithHue:.6 saturation:.5 brightness:.3 + (.7 * angle/45.) alpha:1];
     }
     return [UIColor colorWithHue:.16 saturation:.5 brightness:1 alpha:1];
 }
 
 - (UIColor *) wantedForegreoundColor
 {
-    return [[Sun sharedObject] angle] < 30 ? [UIColor whiteColor] : [UIColor blackColor];
+    return [[Sun sharedObject] angle] < 45 ? [UIColor whiteColor] : [UIColor blackColor];
 }
 
 - (void) configure
@@ -540,8 +543,6 @@ int main(int argc, char * argv[])
     [sun setStrokeColor:[self wantedBackgroundColor].CGColor];
     [sun setFillColor:[self wantedForegreoundColor].CGColor];
     
-    //    CAShapeLayer *handSolid, *handDashed, *innerCircle, *outerCircle, *sun, *centerline;
-
     handSolid.strokeColor = handDashed.strokeColor = centerline.strokeColor = innerCircle.strokeColor = outerCircle.strokeColor = [self wantedForegreoundColor].CGColor;
     
     hourLabel.textColor = angleLabel.textColor = verbumLabel.textColor = [self wantedForegreoundColor];
