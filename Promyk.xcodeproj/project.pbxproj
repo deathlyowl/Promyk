@@ -1,0 +1,269 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FA4B147018EECB2000CD1D4F /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA4B146F18EECB2000CD1D4F /* Media.xcassets */; };
+		FAC2F2CC18EEA7DF00AF364F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC2F2CB18EEA7DF00AF364F /* Foundation.framework */; };
+		FAC2F2CE18EEA7DF00AF364F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC2F2CD18EEA7DF00AF364F /* CoreGraphics.framework */; };
+		FAC2F2D018EEA7DF00AF364F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC2F2CF18EEA7DF00AF364F /* UIKit.framework */; };
+		FAC2F2D818EEA7DF00AF364F /* Promyk.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC2F2D718EEA7DF00AF364F /* Promyk.m */; };
+		FAC2F30118EEBB5800AF364F /* MODERNE SANS.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FAC2F30018EEBB5800AF364F /* MODERNE SANS.ttf */; };
+		FAEF684418EEE55100F37E62 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAEF684318EEE55100F37E62 /* CoreLocation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		FA4B146F18EECB2000CD1D4F /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		FAC2F2C818EEA7DF00AF364F /* Promyk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Promyk.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAC2F2CB18EEA7DF00AF364F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		FAC2F2CD18EEA7DF00AF364F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		FAC2F2CF18EEA7DF00AF364F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		FAC2F2D318EEA7DF00AF364F /* Promyk-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Promyk-Info.plist"; sourceTree = "<group>"; };
+		FAC2F2D718EEA7DF00AF364F /* Promyk.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Promyk.m; sourceTree = "<group>"; };
+		FAC2F30018EEBB5800AF364F /* MODERNE SANS.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MODERNE SANS.ttf"; sourceTree = "<group>"; };
+		FAEF684318EEE55100F37E62 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FAC2F2C518EEA7DF00AF364F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAEF684418EEE55100F37E62 /* CoreLocation.framework in Frameworks */,
+				FAC2F2CE18EEA7DF00AF364F /* CoreGraphics.framework in Frameworks */,
+				FAC2F2D018EEA7DF00AF364F /* UIKit.framework in Frameworks */,
+				FAC2F2CC18EEA7DF00AF364F /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FAC2F2BF18EEA7DF00AF364F = {
+			isa = PBXGroup;
+			children = (
+				FAC2F2D718EEA7DF00AF364F /* Promyk.m */,
+				FAC2F2D318EEA7DF00AF364F /* Promyk-Info.plist */,
+				FAC2F30018EEBB5800AF364F /* MODERNE SANS.ttf */,
+				FA4B146F18EECB2000CD1D4F /* Media.xcassets */,
+				FAC2F2CA18EEA7DF00AF364F /* Frameworks */,
+				FAC2F2C918EEA7DF00AF364F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FAC2F2C918EEA7DF00AF364F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FAC2F2C818EEA7DF00AF364F /* Promyk.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FAC2F2CA18EEA7DF00AF364F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FAEF684318EEE55100F37E62 /* CoreLocation.framework */,
+				FAC2F2CB18EEA7DF00AF364F /* Foundation.framework */,
+				FAC2F2CD18EEA7DF00AF364F /* CoreGraphics.framework */,
+				FAC2F2CF18EEA7DF00AF364F /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FAC2F2C718EEA7DF00AF364F /* Promyk */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FAC2F2FA18EEA7E000AF364F /* Build configuration list for PBXNativeTarget "Promyk" */;
+			buildPhases = (
+				FAC2F2C418EEA7DF00AF364F /* Sources */,
+				FAC2F2C518EEA7DF00AF364F /* Frameworks */,
+				FAC2F2C618EEA7DF00AF364F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Promyk;
+			productName = Promyk;
+			productReference = FAC2F2C818EEA7DF00AF364F /* Promyk.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FAC2F2C018EEA7DF00AF364F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = DO;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Deathly Owl";
+			};
+			buildConfigurationList = FAC2F2C318EEA7DF00AF364F /* Build configuration list for PBXProject "Promyk" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = FAC2F2BF18EEA7DF00AF364F;
+			productRefGroup = FAC2F2C918EEA7DF00AF364F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FAC2F2C718EEA7DF00AF364F /* Promyk */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FAC2F2C618EEA7DF00AF364F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FA4B147018EECB2000CD1D4F /* Media.xcassets in Resources */,
+				FAC2F30118EEBB5800AF364F /* MODERNE SANS.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FAC2F2C418EEA7DF00AF364F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAC2F2D818EEA7DF00AF364F /* Promyk.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		FAC2F2F818EEA7E000AF364F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		FAC2F2F918EEA7E000AF364F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FAC2F2FB18EEA7E000AF364F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				INFOPLIST_FILE = "Promyk-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		FAC2F2FC18EEA7E000AF364F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				INFOPLIST_FILE = "Promyk-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FAC2F2C318EEA7DF00AF364F /* Build configuration list for PBXProject "Promyk" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAC2F2F818EEA7E000AF364F /* Debug */,
+				FAC2F2F918EEA7E000AF364F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FAC2F2FA18EEA7E000AF364F /* Build configuration list for PBXNativeTarget "Promyk" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAC2F2FB18EEA7E000AF364F /* Debug */,
+				FAC2F2FC18EEA7E000AF364F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FAC2F2C018EEA7DF00AF364F /* Project object */;
+}
