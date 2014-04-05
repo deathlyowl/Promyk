@@ -17,6 +17,7 @@
 #define ANIMATION_DURATION 1
 #define YELLOW [UIColor colorWithHue:0.16f saturation:0.51f brightness:1.00f alpha:1.00f]
 #define FONT [UIFont fontWithName:@"ModernSans" size:50]
+#define WEATHER_FONT [UIFont fontWithName:@"Weather&Time" size:50]
 #define CALCULATED @"CalculationsDidEnd"
 #define JULIAN_2000_JANUARY_1_NOON 2451545.0009
 #define ASTRO 18
@@ -73,11 +74,9 @@ double solarMeanAnomaly(double J)
 
 #pragma mark - Classes declarations
 @interface AppDelegate : UIResponder <UIApplicationDelegate, CLLocationManagerDelegate>
-{
-    CLLocationManager *locationManager;
-}
 
 @property (strong, nonatomic) UIWindow *window;
+@property (nonatomic) CLLocationManager *locationManager;
 
 @end
 
@@ -135,7 +134,7 @@ int main(int argc, char * argv[])
 
 @implementation AppDelegate
 
-@synthesize window;
+@synthesize window, locationManager;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -164,13 +163,15 @@ int main(int argc, char * argv[])
 
 - (void) locate
 {
+    NSLog(@"Locate!");
     double longitude = [[NSUserDefaults.standardUserDefaults objectForKey:@"longitude"] doubleValue];
-    double latitude = [[NSUserDefaults.standardUserDefaults objectForKey:@"longitude"] doubleValue];
+    double latitude = [[NSUserDefaults.standardUserDefaults objectForKey:@"latitude"] doubleValue];
     if (longitude && latitude)
     {
         [[Sun sharedObject] setLatitude:latitude];
         [[Sun sharedObject] setLongitude:longitude];
         [[Sun sharedObject] setIsLocated:YES];
+        [[Sun sharedObject] calculate];
     }
     [locationManager startUpdatingLocation];
 }
@@ -350,8 +351,19 @@ int main(int argc, char * argv[])
                                              selector:@selector(setAngle)
                                                  name:CALCULATED
                                                object:nil];
-     }
+}
 
+- (BOOL)canBecomeFirstResponder{
+    return YES;
+}
+
+- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event
+{
+    if (motion == UIEventSubtypeMotionShake)
+    {
+        [(AppDelegate *)[[UIApplication sharedApplication] delegate] locate];
+    } 
+}
 - (void) tick
 {
     NSCalendar *calendar = [NSCalendar currentCalendar];
@@ -479,6 +491,10 @@ int main(int argc, char * argv[])
     angleLabel = [[UILabel alloc] initWithFrame:CGRectMake(BIG_UNIT+10, 3*BIG_UNIT + SMALL_UNIT, 2*BIG_UNIT, 2.5*SMALL_UNIT)];
     
     hourLabel.font = verbumLabel.font = angleLabel.font = FONT;
+    
+//    verbumLabel.font = WEATHER_FONT;
+    
+    
     hourLabel.textAlignment = verbumLabel.textAlignment = angleLabel.textAlignment = NSTextAlignmentCenter;
     
     [hourLabel.layer setOpacity:.1];
@@ -512,6 +528,46 @@ int main(int argc, char * argv[])
     if (seconds == 0) [[Sun sharedObject] calculate];
 }
 
+- (NSString *) verbum
+{
+    NSDate *now = [NSDate date];
+    NSDate *noon = [NSDate dateWithJulianDay:[[Sun sharedObject] noon]];
+    NSDate *midnight = [noon dateByAddingTimeInterval:60*60*12];
+    NSDate *sunrise = [NSDate dateWithJulianDay:[[Sun sharedObject] pair].up];
+    NSDate *sunset = [NSDate dateWithJulianDay:[[Sun sharedObject] pair].down];
+    
+    int minutesToNoon = (int)[now timeIntervalSinceDate:noon]/60;
+    int minutesToMidnight = (int)[now timeIntervalSinceDate:midnight]/60;
+    int minutesToSunset = (int)[now timeIntervalSinceDate:sunset]/60;
+    int minutesToSunrise = (int)[now timeIntervalSinceDate:sunrise]/60;
+
+    if (abs(minutesToNoon) < 15)
+    {
+        if (minutesToNoon == 0) return @"Noon";
+        return minutesToNoon > 0 ? [NSString stringWithFormat:@"%i past noon", abs(minutesToNoon)] : [NSString stringWithFormat:@"Noon in %i", abs(minutesToNoon)];
+    }
+    
+    if (abs(minutesToMidnight) < 15)
+    {
+        if (minutesToMidnight == 0) return @"Midnight";
+        return minutesToMidnight > 0 ? [NSString stringWithFormat:@"%i past midnight", abs(minutesToMidnight)] : [NSString stringWithFormat:@"Midnight in %i", abs(minutesToMidnight)];
+    }
+    
+    if (abs(minutesToSunset) < 15)
+    {
+        if (minutesToSunset == 0) return @"Sunset";
+        return minutesToSunset > 0 ? [NSString stringWithFormat:@"%i past sunset", abs(minutesToSunset)] : [NSString stringWithFormat:@"Sunset in %i", abs(minutesToSunset)];
+    }
+    
+    if (abs(minutesToSunrise) < 15)
+    {
+        if (minutesToSunrise == 0) return @"Sunrise";
+        return minutesToSunrise > 0 ? [NSString stringWithFormat:@"%i past sunrise", abs(minutesToSunrise)] : [NSString stringWithFormat:@"Sunrise in %i", abs(minutesToSunrise)];
+    }
+    return @"";
+    //return [NSString stringWithFormat:@"%i | %i | %i | %i", minutesToNoon, minutesToMidnight, minutesToSunset, minutesToSunrise];
+}
+
 - (void) setAngle
 {
     float angle = [[Sun sharedObject] angle];
@@ -528,7 +584,7 @@ int main(int argc, char * argv[])
                                           2*BIG_UNIT,
                                           2.5*SMALL_UNIT)];
     
-    [verbumLabel setText:@"no message"];
+    [verbumLabel setText:[self verbum]];
     
     float minAngle = [[Sun sharedObject] minAngle];
     float maxAngle = [[Sun sharedObject] maxAngle];

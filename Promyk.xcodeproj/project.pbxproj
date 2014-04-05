@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FA067FD218F082FA0024A6D5 /* Weather&Time.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FA067FD118F082FA0024A6D5 /* Weather&Time.ttf */; };
 		FA4B147018EECB2000CD1D4F /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA4B146F18EECB2000CD1D4F /* Media.xcassets */; };
 		FAC2F2CC18EEA7DF00AF364F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC2F2CB18EEA7DF00AF364F /* Foundation.framework */; };
 		FAC2F2CE18EEA7DF00AF364F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC2F2CD18EEA7DF00AF364F /* CoreGraphics.framework */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FA067FD118F082FA0024A6D5 /* Weather&Time.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Weather&Time.ttf"; sourceTree = "<group>"; };
 		FA4B146F18EECB2000CD1D4F /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		FAC2F2C818EEA7DF00AF364F /* Promyk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Promyk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC2F2CB18EEA7DF00AF364F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -48,6 +50,7 @@
 			children = (
 				FAC2F2D718EEA7DF00AF364F /* Promyk.m */,
 				FAC2F2D318EEA7DF00AF364F /* Promyk-Info.plist */,
+				FA067FD118F082FA0024A6D5 /* Weather&Time.ttf */,
 				FAC2F30018EEBB5800AF364F /* MODERNE SANS.ttf */,
 				FA4B146F18EECB2000CD1D4F /* Media.xcassets */,
 				FAC2F2CA18EEA7DF00AF364F /* Frameworks */,
@@ -129,6 +132,7 @@
 			files = (
 				FA4B147018EECB2000CD1D4F /* Media.xcassets in Resources */,
 				FAC2F30118EEBB5800AF364F /* MODERNE SANS.ttf in Resources */,
+				FA067FD218F082FA0024A6D5 /* Weather&Time.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
