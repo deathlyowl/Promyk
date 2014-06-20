@@ -17,7 +17,6 @@
 #define ANIMATION_DURATION 1
 #define YELLOW [UIColor colorWithHue:0.16f saturation:0.51f brightness:1.00f alpha:1.00f]
 #define FONT [UIFont fontWithName:@"ModernSans" size:50]
-#define WEATHER_FONT [UIFont fontWithName:@"Weather&Time" size:50]
 #define CALCULATED @"CalculationsDidEnd"
 #define JULIAN_2000_JANUARY_1_NOON 2451545.0009
 #define ASTRO 18
@@ -346,11 +345,6 @@ int main(int argc, char * argv[])
 {
     [super viewDidLoad];
     [self configure];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setAngle)
-                                                 name:CALCULATED
-                                               object:nil];
 }
 
 - (BOOL)canBecomeFirstResponder{
