@@ -2,7 +2,7 @@
 //  Promyk
 //
 //  Created by Paweł Ksieniewicz on 04.04.2014.
-//  Copyright (c) 2014 Deathly Owl. All rights reserved.
+//  Copyright (c) 2014 Paweł Ksieniewicz. All rights reserved.
 //
 
 #import <Availability.h>
@@ -558,7 +558,10 @@ int main(int argc, char * argv[])
         if (minutesToSunrise == 0) return @"Sunrise";
         return minutesToSunrise > 0 ? [NSString stringWithFormat:@"%i past sunrise", abs(minutesToSunrise)] : [NSString stringWithFormat:@"Sunrise in %i", abs(minutesToSunrise)];
     }
-    return @"";
+    //TODO: Verbum date
+    NSDateFormatter *dateFormatter = NSDateFormatter.new;
+    [dateFormatter setDateFormat:@"EEEE"];
+    return [dateFormatter stringFromDate:[NSDate date]];
     //return [NSString stringWithFormat:@"%i | %i | %i | %i", minutesToNoon, minutesToMidnight, minutesToSunset, minutesToSunrise];
 }
 
