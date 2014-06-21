@@ -89,9 +89,6 @@ double solarMeanAnomaly(double J)
 
 @interface Sun : NSObject
 
-//@property (nonatomic) double sunset;
-//@property (nonatomic) double sunrise;
-
 @property (nonatomic) double noon;
 
 @property (nonatomic) double longitude;
@@ -297,16 +294,6 @@ int main(int argc, char * argv[])
     navi.up = noon - (navi.down - noon);
     civil.up = noon - (civil.down - noon);
     
-    // Lookup
-    /*
-    NSLog(@"STAGE: %i", stage);
-    NSLog(@"NOW:\t\t %@",           [NSDate dateWithJulianDay:julianNow]);
-    NSLog(@"NOON:\t\t %@",          [NSDate dateWithJulianDay:noon]);
-    NSLog(@"NORMAL:\t\t %@ | %@",   [NSDate dateWithJulianDay:pair.up],     [NSDate dateWithJulianDay:pair.down]);
-    NSLog(@"CIVIL:\t\t %@ | %@",    [NSDate dateWithJulianDay:civil.up],    [NSDate dateWithJulianDay:civil.down]);
-    NSLog(@"NAVI:\t\t %@ | %@",     [NSDate dateWithJulianDay:navi.up],     [NSDate dateWithJulianDay:navi.down]);
-    NSLog(@"ASTRO:\t\t %@ | %@",    [NSDate dateWithJulianDay:astro.up],    [NSDate dateWithJulianDay:astro.down]);
-    */
     [[NSNotificationCenter defaultCenter] postNotificationName:CALCULATED
                                                         object:nil];
 }
@@ -485,10 +472,6 @@ int main(int argc, char * argv[])
     angleLabel = [[UILabel alloc] initWithFrame:CGRectMake(BIG_UNIT+10, 3*BIG_UNIT + SMALL_UNIT, 2*BIG_UNIT, 2.5*SMALL_UNIT)];
     
     hourLabel.font = verbumLabel.font = angleLabel.font = FONT;
-    
-//    verbumLabel.font = WEATHER_FONT;
-    
-    
     hourLabel.textAlignment = verbumLabel.textAlignment = angleLabel.textAlignment = NSTextAlignmentCenter;
     
     [hourLabel.layer setOpacity:.1];
@@ -558,11 +541,10 @@ int main(int argc, char * argv[])
         if (minutesToSunrise == 0) return @"Sunrise";
         return minutesToSunrise > 0 ? [NSString stringWithFormat:@"%i past sunrise", abs(minutesToSunrise)] : [NSString stringWithFormat:@"Sunrise in %i", abs(minutesToSunrise)];
     }
-    //TODO: Verbum date
+    
     NSDateFormatter *dateFormatter = NSDateFormatter.new;
     [dateFormatter setDateFormat:@"EEEE"];
-    return [dateFormatter stringFromDate:[NSDate date]];
-    //return [NSString stringWithFormat:@"%i | %i | %i | %i", minutesToNoon, minutesToMidnight, minutesToSunset, minutesToSunrise];
+    return [dateFormatter stringFromDate:NSDate.date];
 }
 
 - (void) setAngle

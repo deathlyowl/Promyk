@@ -8,24 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		FA4B147018EECB2000CD1D4F /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA4B146F18EECB2000CD1D4F /* Media.xcassets */; };
-		FAC2F2CC18EEA7DF00AF364F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC2F2CB18EEA7DF00AF364F /* Foundation.framework */; };
-		FAC2F2CE18EEA7DF00AF364F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC2F2CD18EEA7DF00AF364F /* CoreGraphics.framework */; };
-		FAC2F2D018EEA7DF00AF364F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC2F2CF18EEA7DF00AF364F /* UIKit.framework */; };
 		FAC2F2D818EEA7DF00AF364F /* Promyk.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC2F2D718EEA7DF00AF364F /* Promyk.m */; };
 		FAC2F30118EEBB5800AF364F /* MODERNE SANS.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FAC2F30018EEBB5800AF364F /* MODERNE SANS.ttf */; };
-		FAEF684418EEE55100F37E62 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAEF684318EEE55100F37E62 /* CoreLocation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		FA4B146F18EECB2000CD1D4F /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		FAC2F2C818EEA7DF00AF364F /* Promyk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Promyk.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		FAC2F2CB18EEA7DF00AF364F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		FAC2F2CD18EEA7DF00AF364F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		FAC2F2CF18EEA7DF00AF364F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FAC2F2D318EEA7DF00AF364F /* Promyk-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Promyk-Info.plist"; sourceTree = "<group>"; };
 		FAC2F2D718EEA7DF00AF364F /* Promyk.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Promyk.m; sourceTree = "<group>"; };
 		FAC2F30018EEBB5800AF364F /* MODERNE SANS.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MODERNE SANS.ttf"; sourceTree = "<group>"; };
-		FAEF684318EEE55100F37E62 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,10 +25,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FAEF684418EEE55100F37E62 /* CoreLocation.framework in Frameworks */,
-				FAC2F2CE18EEA7DF00AF364F /* CoreGraphics.framework in Frameworks */,
-				FAC2F2D018EEA7DF00AF364F /* UIKit.framework in Frameworks */,
-				FAC2F2CC18EEA7DF00AF364F /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50,7 +38,6 @@
 				FAC2F2D318EEA7DF00AF364F /* Promyk-Info.plist */,
 				FAC2F30018EEBB5800AF364F /* MODERNE SANS.ttf */,
 				FA4B146F18EECB2000CD1D4F /* Media.xcassets */,
-				FAC2F2CA18EEA7DF00AF364F /* Frameworks */,
 				FAC2F2C918EEA7DF00AF364F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,17 +48,6 @@
 				FAC2F2C818EEA7DF00AF364F /* Promyk.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		FAC2F2CA18EEA7DF00AF364F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				FAEF684318EEE55100F37E62 /* CoreLocation.framework */,
-				FAC2F2CB18EEA7DF00AF364F /* Foundation.framework */,
-				FAC2F2CD18EEA7DF00AF364F /* CoreGraphics.framework */,
-				FAC2F2CF18EEA7DF00AF364F /* UIKit.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
