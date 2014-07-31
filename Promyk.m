@@ -5,11 +5,8 @@
 //  Copyright (c) 2014 Paweł Ksieniewicz. All rights reserved.
 //
 
-#import <Availability.h>
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
-#import <tgmath.h>
-#import "sunmath.h"
 #import "Sun.h"
 
 #define LINE_WIDTH 8
@@ -28,6 +25,14 @@
 
 @end
 
+int main(int argc, char * argv[])
+{
+    @autoreleasepool
+    {
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+    }
+}
+
 @interface ViewController : UIViewController
 {
     CAShapeLayer *handSolid, *handDashed, *innerCircle, *outerCircle, *sun, *centerline;
@@ -35,13 +40,6 @@
 }
 
 @end
-
-int main(int argc, char * argv[])
-{
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
-    }
-}
 
 #pragma mark - Class implementations
 
@@ -127,20 +125,19 @@ int main(int argc, char * argv[])
         [(AppDelegate *)[[UIApplication sharedApplication] delegate] locate];
     } 
 }
+
 - (void) tick
 {
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSDateComponents *components = [calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit)
-                                               fromDate:[NSDate date]];
-    NSInteger hour = [components hour];
-    NSInteger minute = [components minute];
-    NSInteger second = [components second];
+    NSDateComponents *components = [[NSCalendar currentCalendar]
+                                    components:(NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit)
+                                        fromDate:[NSDate date]];
     
-    NSString *separator = second % 2 ? @":" : @".";
+    [hourLabel setText:[NSString stringWithFormat:@"%li%@%02li",
+                        (long)[components hour],
+                        [components second] % 2 ? @":" : @".",
+                        (long)[components minute]]];
     
-    [hourLabel setText:[NSString stringWithFormat:@"%li%@%02li", (long)hour, separator, (long)minute]];
-    
-    [self setSeconds:second];
+    [self setSeconds:[components second]];
 }
 
 - (UIColor *) wantedBackgroundColor
@@ -249,9 +246,9 @@ int main(int argc, char * argv[])
                                                                    LINE_WIDTH*2)].CGPath];
     
     // Labels
-    hourLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 2*SMALL_UNIT, 320, 2.5*SMALL_UNIT)];
-    verbumLabel = [[UILabel alloc] initWithFrame:CGRectMake(SMALL_UNIT, 5*BIG_UNIT, 320 - 2*SMALL_UNIT, 2.5*SMALL_UNIT)];
-    angleLabel = [[UILabel alloc] initWithFrame:CGRectMake(BIG_UNIT+10, 3*BIG_UNIT + SMALL_UNIT, 2*BIG_UNIT, 2.5*SMALL_UNIT)];
+    hourLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.frame.size.height/4)];
+    verbumLabel = [[UILabel alloc] initWithFrame:CGRectMake(SMALL_UNIT, self.view.frame.size.height*.75, 320 - 2*SMALL_UNIT, self.view.frame.size.height/4)];
+    angleLabel = [[UILabel alloc] initWithFrame:CGRectMake(BIG_UNIT+10, 4*BIG_UNIT + SMALL_UNIT, 2*BIG_UNIT, 2.5*SMALL_UNIT)];
     
     hourLabel.font = verbumLabel.font = angleLabel.font = FONT;
     hourLabel.textAlignment = verbumLabel.textAlignment = angleLabel.textAlignment = NSTextAlignmentCenter;
@@ -333,15 +330,17 @@ int main(int argc, char * argv[])
 {
     float angle = [[Sun sharedObject] angle];
     
+    //angle = 45;
+    
     [CATransaction setAnimationDuration:ANIMATION_DURATION];
-    CATransform3D transform = CATransform3DMakeRotation(degreesToRadians(angle), 0, 0, 1);
+    CATransform3D transform = CATransform3DMakeRotation(angle * M_PI / 180, 0, 0, 1);
     
     handSolid.transform = transform;
     handDashed.transform = transform;
     [angleLabel setText:[NSString stringWithFormat:@"%.0f°", angle]];
     
     [angleLabel.layer setFrame:CGRectMake(angle > 0 ? BIG_UNIT+10 : BIG_UNIT,
-                                          angle > 0 ? 3*BIG_UNIT + SMALL_UNIT : 2*BIG_UNIT + SMALL_UNIT,
+                                          angle > 0 ? self.view.center.y + SMALL_UNIT : self.view.center.y - 3 * SMALL_UNIT,
                                           2*BIG_UNIT,
                                           2.5*SMALL_UNIT)];
     

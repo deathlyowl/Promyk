@@ -14,7 +14,6 @@
 #define CIVIL 6
 #define FIRST_TOUCH 0.8
 
-
 @implementation Sun
 
 @synthesize pair, noon, astro, navi, civil,longitude, latitude, isLocated, stage, minAngle, maxAngle, angle;
