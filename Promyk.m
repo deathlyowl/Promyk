@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import <tgmath.h>
+#import "sunmath.h"
+#import "Sun.h"
 
 #define LINE_WIDTH 8
 #define SMALL_UNIT 20
@@ -17,59 +19,6 @@
 #define ANIMATION_DURATION 1
 #define YELLOW [UIColor colorWithHue:0.16f saturation:0.51f brightness:1.00f alpha:1.00f]
 #define FONT [UIFont fontWithName:@"ModernSans" size:50]
-#define CALCULATED @"CalculationsDidEnd"
-#define JULIAN_2000_JANUARY_1_NOON 2451545.0009
-#define ASTRO 18
-#define NAVI 12
-#define CIVIL 6
-#define FIRST_TOUCH 0.83
-
-struct timePair {double up, down;};
-
-#pragma mark - C Functions
-
-double degreesToRadians(double degrees)
-{
-    return degrees * M_PI / 180;
-}
-
-double radiansToDegrees(double radians)
-{
-    return radians * 180 / M_PI;
-}
-
-double appToJulian(double app, double anomaly, double lambda)
-{
-    return app + (0.0053 * sin(degreesToRadians(anomaly)) - (0.0069 * sin(2 * lambda)));
-}
-
-double approx(double angle, int julianCycle)
-{
-    return JULIAN_2000_JANUARY_1_NOON + julianCycle - (angle / 360);
-}
-
-double hourAngle(double angle, double latitude, double delta)
-{
-    return radiansToDegrees(acos((sin(degreesToRadians(angle)) - sin(degreesToRadians(latitude))*sin(delta))/(cos(degreesToRadians(latitude)) * cos(delta))));
-}
-
-double eclipticLongitude (double M, double C)
-{
-    return degreesToRadians(fmod((M + 102.9372 + C + 180), 360));
-}
-
-double equationOfCenter(double M)
-{
-    return
-    1.9148 * sin(degreesToRadians(M)) +
-    0.0200 * sin(2 * degreesToRadians(M)) +
-    0.0003 * sin(3 * degreesToRadians(M));
-}
-
-double solarMeanAnomaly(double J)
-{
-    return fmod((357.5291 + 0.98560028 * (J - 2451545)), 360);
-}
 
 #pragma mark - Classes declarations
 @interface AppDelegate : UIResponder <UIApplicationDelegate, CLLocationManagerDelegate>
@@ -84,38 +33,6 @@ double solarMeanAnomaly(double J)
     CAShapeLayer *handSolid, *handDashed, *innerCircle, *outerCircle, *sun, *centerline;
     UILabel *hourLabel, *angleLabel, *verbumLabel;
 }
-
-@end
-
-@interface Sun : NSObject
-
-@property (nonatomic) double noon;
-
-@property (nonatomic) double longitude;
-@property (nonatomic) double latitude;
-
-@property (nonatomic) struct timePair pair;
-@property (nonatomic) struct timePair astro;
-@property (nonatomic) struct timePair navi;
-@property (nonatomic) struct timePair civil;
-
-@property (nonatomic) int minAngle, maxAngle, angle;
-
-@property (nonatomic) int stage;
-
-@property (nonatomic) BOOL isLocated;
-
-- (void) calculate;
-+ (Sun *) sharedObject;
-
-@end
-
-@interface NSDate (JulianDate)
-
-- (double) julianDay;
-- (int) julianCycleForLongitude:(double)longitude;
-- (id) initWithJulianDay:(double)julian;
-+ (NSDate *) dateWithJulianDay:(double) julian;
 
 @end
 
@@ -187,141 +104,6 @@ int main(int argc, char * argv[])
     [NSUserDefaults.standardUserDefaults setObject:[NSNumber numberWithDouble:location.coordinate.latitude] forKey:@"latitude"];
     [NSUserDefaults.standardUserDefaults setObject:[NSNumber numberWithDouble:location.coordinate.longitude] forKey:@"longitude"];
     [NSUserDefaults.standardUserDefaults synchronize];
-}
-
-@end
-
-@implementation Sun
-
-@synthesize pair, noon, astro, navi, civil,longitude, latitude, isLocated, stage, minAngle, maxAngle, angle;
-
-+ (Sun *) sharedObject
-{
-    static dispatch_once_t once;
-    static Sun *sharedObject;
-    dispatch_once(&once, ^{
-        sharedObject = [[self alloc] init];
-        sharedObject.isLocated = NO;
-    });
-    return sharedObject;
-}
-
-- (void)calculate
-{
-    // Julian cycle
-    NSDate *date = [NSDate date];
-    int julianCycle = [date julianCycleForLongitude:longitude];
-    
-    // Solar Noon
-    noon = approx(longitude, julianCycle);
-    
-    double  anomaly = solarMeanAnomaly(noon),
-            center = equationOfCenter(anomaly),
-            lambda = eclipticLongitude(anomaly,center);
-    
-    double buffer = noon + 0.0053 * sin(degreesToRadians(anomaly)) - 0.0069 * sin(2*lambda);
-
-    while (anomaly != solarMeanAnomaly(buffer))
-    {
-        anomaly = solarMeanAnomaly(buffer);
-        center = equationOfCenter(anomaly);
-        lambda = eclipticLongitude(anomaly, center);
-        buffer = noon + 0.0053 * sin(degreesToRadians(anomaly)) - 0.0069 * sin(2*lambda);
-    }
-    noon = buffer;
-    
-    // Declination of the Sun
-    double delta = asin(sin(lambda) * sin(degreesToRadians(23.45)));
-    
-    // Hour Angle
-    double firstTouchAngle = hourAngle(-FIRST_TOUCH, latitude, delta);
-    double astroAngle = hourAngle(-ASTRO, latitude, delta);
-    double naviAngle = hourAngle(-NAVI, latitude, delta);
-    double civilAngle = hourAngle(-CIVIL, latitude, delta);
-    
-    stage = 4;
-    if (astroAngle != astroAngle)           stage = 3;
-    if (naviAngle != naviAngle)             stage = 2;
-    if (civilAngle != civilAngle)           stage = 1;
-    if (firstTouchAngle != firstTouchAngle) stage = 0;
-    
-    double lastTouchTime = approx(longitude - firstTouchAngle , julianCycle);
-    double lastAstroTime = approx(longitude - astroAngle, julianCycle);
-    double lastNaviTime = approx(longitude - naviAngle, julianCycle);
-    double lastCivilTime = approx(longitude - civilAngle, julianCycle);
-    
-    // Code below is extremally stupid, but works
-    minAngle = 0;
-    maxAngle = 0;
-    angle = 0;
-    
-    int minInterval = HUGE_VAL;
-    
-    for (int i=90; i>-90; i--)
-    {
-        double hAngle = hourAngle(i, latitude, delta);
-        double downtime = appToJulian(approx(longitude - hAngle , julianCycle), anomaly, lambda);
-        double uptime = noon - ( downtime - noon );
-        
-        NSDate *downDate = [NSDate dateWithJulianDay:downtime];
-        NSDate *upDate = [NSDate dateWithJulianDay:uptime];
-        
-        if (hAngle == hAngle)
-        {
-            int downInterval  = [downDate timeIntervalSinceNow];
-            int upInterval  = [upDate timeIntervalSinceNow];
-            if (abs(downInterval) < minInterval) {
-                angle = i;
-                minInterval = abs(downInterval);
-            }
-            if (abs(upInterval) < minInterval) {
-                angle = i;
-                minInterval = abs(upInterval);
-            }
-            
-            if (minAngle > i) minAngle = i;
-            if (maxAngle < i) maxAngle = i;
-        }
-    }
-
-    // Sunset
-    pair.down = appToJulian(lastTouchTime, anomaly, lambda);
-    astro.down = appToJulian(lastAstroTime, anomaly, lambda);
-    navi.down = appToJulian(lastNaviTime, anomaly, lambda);
-    civil.down = appToJulian(lastCivilTime, anomaly, lambda);
-    pair.up = noon - ( pair.down - noon );
-    astro.up = noon - (astro.down - noon);
-    navi.up = noon - (navi.down - noon);
-    civil.up = noon - (civil.down - noon);
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:CALCULATED
-                                                        object:nil];
-}
-
-@end
-
-
-@implementation NSDate (JulianDate)
-
-- (double) julianDay
-{
-    double epoch = [self timeIntervalSince1970];
-    return ( epoch / 86400 ) + 2440587.5;
-}
-
-- (int) julianCycleForLongitude:(double)longitude
-{
-    return (int)(self.julianDay - 2451545.0009 + longitude / 360 + .5);
-}
-
-- (id)initWithJulianDay:(double)julian
-{
-    double epoch = 86400 * (julian - + + + + + - - - - - - - - + 2440587.5);
-    return [[NSDate alloc] initWithTimeIntervalSince1970:epoch];
-}
-
-+ (NSDate *)dateWithJulianDay:(double)julian{
-    return [[NSDate alloc] initWithJulianDay:julian];
 }
 
 @end
