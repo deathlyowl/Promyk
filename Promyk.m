@@ -16,6 +16,8 @@
 #define ANIMATION_DURATION 1
 #define YELLOW [UIColor colorWithHue:0.16f saturation:0.51f brightness:1.00f alpha:1.00f]
 #define FONT [UIFont fontWithName:@"ModernSans" size:50]
+#define INFO_FONT [UIFont fontWithName:@"ModernSans" size:22]
+
 
 #pragma mark - Classes declarations
 @interface AppDelegate : UIResponder <UIApplicationDelegate, CLLocationManagerDelegate>
@@ -44,9 +46,46 @@ int main(int argc, char * argv[])
 
 @interface InfoViewController : UIViewController
 
+@property (nonatomic, retain) UIColor *backgroundColor;
+@property (nonatomic, retain) UIColor *foregroundColor;
+
 @end
 
 #pragma mark - Class implementations
+
+@implementation InfoViewController
+
+-(void)viewDidLoad
+{
+    // Stylization
+    [self.view.layer setCornerRadius:20];
+    [self.view setBackgroundColor:_backgroundColor];
+    
+    UILabel *infoLabel = [UILabel new];
+    [infoLabel setFont:INFO_FONT];
+    [infoLabel setTextColor:_foregroundColor];
+    
+    [infoLabel setFrame:CGRectMake(20, 20, self.view.frame.size.width-40, (self.view.frame.size.height-40)*.75)];
+    [infoLabel setNumberOfLines:0];
+    
+    [infoLabel setText:@"It's a clock with information about current angle of sunrays.\n\nPromyk means a little, warm sunray in polish."];
+    
+    [self.view addSubview:infoLabel];
+    
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                    action:@selector(goBack)];
+    
+
+    [self.view addGestureRecognizer:tapRecognizer];
+}
+
+- (void) goBack
+{
+    [self dismissViewControllerAnimated:YES
+                             completion:nil];
+}
+
+@end
 
 @implementation AppDelegate
 
@@ -268,6 +307,9 @@ int main(int argc, char * argv[])
     [infoButton setTintColor:[self wantedForegreoundColor]];
     [infoButton setCenter:CGPointMake(self.view.frame.size.width - 20, self.view.frame.size.height - 20)];
     [infoButton setAlpha:.2];
+    [infoButton addTarget:self
+                   action:@selector(showInfoView)
+         forControlEvents:UIControlEventTouchUpInside];
     
     // Place all the layers
     [self.view.layer addSublayer:outerCircle];
@@ -280,6 +322,17 @@ int main(int argc, char * argv[])
     [self.view addSubview:hourLabel];
     [self.view addSubview:angleLabel];
     [self.view addSubview:infoButton];
+}
+
+- (void) showInfoView
+{
+    InfoViewController *infoViewController = [InfoViewController new];
+    [infoViewController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+    [infoViewController setBackgroundColor:[self wantedForegreoundColor]];
+    [infoViewController setForegroundColor:[self wantedBackgroundColor]];
+    [self presentViewController:infoViewController
+                       animated:YES
+                     completion:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -334,6 +387,7 @@ int main(int argc, char * argv[])
     }
     
     NSDateFormatter *dateFormatter = NSDateFormatter.new;
+    [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"EN"]];
     [dateFormatter setDateFormat:@"EEEE"];
     return [dateFormatter stringFromDate:NSDate.date];
 }
