@@ -37,7 +37,12 @@ int main(int argc, char * argv[])
 {
     CAShapeLayer *handSolid, *handDashed, *innerCircle, *outerCircle, *sun, *centerline;
     UILabel *hourLabel, *angleLabel, *verbumLabel;
+    UIButton *infoButton;
 }
+
+@end
+
+@interface InfoViewController : UIViewController
 
 @end
 
@@ -258,6 +263,12 @@ int main(int argc, char * argv[])
     [verbumLabel setMinimumScaleFactor:.1];
     [verbumLabel setAdjustsFontSizeToFitWidth:YES];
     
+    // Info button
+    infoButton = [UIButton buttonWithType:UIButtonTypeInfoDark];
+    [infoButton setTintColor:[self wantedForegreoundColor]];
+    [infoButton setCenter:CGPointMake(self.view.frame.size.width - 20, self.view.frame.size.height - 20)];
+    [infoButton setAlpha:.2];
+    
     // Place all the layers
     [self.view.layer addSublayer:outerCircle];
     [self.view.layer addSublayer:innerCircle];
@@ -268,6 +279,7 @@ int main(int argc, char * argv[])
     [self.view addSubview:verbumLabel];
     [self.view addSubview:hourLabel];
     [self.view addSubview:angleLabel];
+    [self.view addSubview:infoButton];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -358,6 +370,7 @@ int main(int argc, char * argv[])
     [self.view.layer setBackgroundColor:[self wantedBackgroundColor].CGColor];
     [sun setStrokeColor:[self wantedBackgroundColor].CGColor];
     [sun setFillColor:[self wantedForegreoundColor].CGColor];
+    [infoButton setTintColor:[self wantedForegreoundColor]];
     
     handSolid.strokeColor = handDashed.strokeColor = centerline.strokeColor = innerCircle.strokeColor = outerCircle.strokeColor = [self wantedForegreoundColor].CGColor;
     
