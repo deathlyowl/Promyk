@@ -17,7 +17,9 @@
 #define YELLOW [UIColor colorWithHue:0.16f saturation:0.51f brightness:1.00f alpha:1.00f]
 #define FONT [UIFont fontWithName:@"ModernSans" size:50]
 #define INFO_FONT [UIFont fontWithName:@"ModernSans" size:22]
-
+#define BECOME_ACTIVE @"Become active"
+#define RESIGN_ACTIVE @"Resign active"
+#define ACTION_URL @"http://deathlyowl.com"
 
 #pragma mark - Classes declarations
 @interface AppDelegate : UIResponder <UIApplicationDelegate, CLLocationManagerDelegate>
@@ -51,41 +53,7 @@ int main(int argc, char * argv[])
 
 @end
 
-#pragma mark - Class implementations
-
-@implementation InfoViewController
-
--(void)viewDidLoad
-{
-    // Stylization
-    [self.view.layer setCornerRadius:20];
-    [self.view setBackgroundColor:_backgroundColor];
-    
-    UILabel *infoLabel = [UILabel new];
-    [infoLabel setFont:INFO_FONT];
-    [infoLabel setTextColor:_foregroundColor];
-    
-    [infoLabel setFrame:CGRectMake(20, 20, self.view.frame.size.width-40, (self.view.frame.size.height-40)*.75)];
-    [infoLabel setNumberOfLines:0];
-    
-    [infoLabel setText:@"It's a clock with information about current angle of sunrays.\n\nPromyk means a little, warm sunray in polish."];
-    
-    [self.view addSubview:infoLabel];
-    
-    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                                    action:@selector(goBack)];
-    
-
-    [self.view addGestureRecognizer:tapRecognizer];
-}
-
-- (void) goBack
-{
-    [self dismissViewControllerAnimated:YES
-                             completion:nil];
-}
-
-@end
+#pragma mark - AppDelegate
 
 @implementation AppDelegate
 
@@ -111,8 +79,16 @@ int main(int argc, char * argv[])
     return YES;
 }
 
+- (void)applicationWillResignActive:(UIApplication *)application
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:RESIGN_ACTIVE
+                                                        object:nil];
+}
+
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+    [[NSNotificationCenter defaultCenter] postNotificationName:BECOME_ACTIVE
+                                                        object:nil];
     [[Sun sharedObject] calculate];
 }
 
@@ -150,13 +126,41 @@ int main(int argc, char * argv[])
 
 @end
 
+#pragma mark - ViewController
 @implementation ViewController
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [self configure];
+    //TODO: Radius change when inactive
+    /*
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(becomeActive)
+                                                 name:BECOME_ACTIVE
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(resignActive)
+                                                 name:RESIGN_ACTIVE
+                                               object:nil];
+     */
 }
+
+/*
+- (void) becomeActive
+{
+    [UIView setAnimationDuration:5];
+    [UIView setAnimationsEnabled:YES];
+    self.view.layer.cornerRadius = 20;
+}
+
+- (void) resignActive
+{
+    [UIView setAnimationDuration:5];
+    [UIView setAnimationsEnabled:YES];
+    self.view.layer.cornerRadius = 0;
+}
+ */
 
 - (BOOL)canBecomeFirstResponder{
     return YES;
@@ -328,8 +332,8 @@ int main(int argc, char * argv[])
 {
     InfoViewController *infoViewController = [InfoViewController new];
     [infoViewController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
-    [infoViewController setBackgroundColor:[self wantedForegreoundColor]];
-    [infoViewController setForegroundColor:[self wantedBackgroundColor]];
+    [infoViewController setBackgroundColor:[self wantedBackgroundColor]];
+    [infoViewController setForegroundColor:[self wantedForegreoundColor]];
     [self presentViewController:infoViewController
                        animated:YES
                      completion:nil];
@@ -432,3 +436,58 @@ int main(int argc, char * argv[])
 }
 
 @end
+
+#pragma mark - InfoViewController
+@implementation InfoViewController
+
+-(void)viewDidLoad
+{
+    // Stylization
+    [self.view.layer setCornerRadius:20];
+    [self.view setBackgroundColor:_backgroundColor];
+    
+    UILabel *infoLabel = [UILabel new];
+    [infoLabel setFont:INFO_FONT];
+    [infoLabel setTextColor:_foregroundColor];
+    
+    [infoLabel setFrame:CGRectMake(20, 20, self.view.frame.size.width-40, (self.view.frame.size.height-40)*.7)];
+    [infoLabel setNumberOfLines:0];
+    
+    [infoLabel setText:@"It's a clock providing the current angle of sunrays hitting your spot on Earth.\n\nPromyk means a little, warm sunray in Polish."];
+    
+    UIButton *authorLabel = [[UIButton alloc] initWithFrame:CGRectMake(20, self.view.frame.size.height*.7 - 20, 280, 20)];
+    [authorLabel setTitle:@"more at Deathly Owl"
+                 forState:UIControlStateNormal];
+    [authorLabel.titleLabel setFont:INFO_FONT];
+    [authorLabel.titleLabel setNumberOfLines:0];
+    [authorLabel.titleLabel setTextColor:_foregroundColor];
+    
+    [authorLabel setAlpha:.2];
+    [authorLabel addTarget:self
+                    action:@selector(action)
+          forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.view addSubview:infoLabel];
+    [self.view addSubview:authorLabel];
+    
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                    action:@selector(goBack)];
+    
+    
+    [self.view addGestureRecognizer:tapRecognizer];
+}
+
+- (void) action
+{
+//    NSLog(@"Action!");
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:ACTION_URL]];
+}
+
+- (void) goBack
+{
+    [self dismissViewControllerAnimated:YES
+                             completion:nil];
+}
+
+@end
+
