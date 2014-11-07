@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		FA4B147018EECB2000CD1D4F /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA4B146F18EECB2000CD1D4F /* Media.xcassets */; };
 		FAC2F2D818EEA7DF00AF364F /* Promyk.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC2F2D718EEA7DF00AF364F /* Promyk.m */; };
-		FAC2F30118EEBB5800AF364F /* MODERNE SANS.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FAC2F30018EEBB5800AF364F /* MODERNE SANS.ttf */; };
 		FAEAFF90198A71B700B21CF5 /* Sun.m in Sources */ = {isa = PBXBuildFile; fileRef = FAEAFF8F198A71B700B21CF5 /* Sun.m */; };
 		FAEAFF93198A737A00B21CF5 /* sunmath.c in Sources */ = {isa = PBXBuildFile; fileRef = FAEAFF92198A737A00B21CF5 /* sunmath.c */; };
 /* End PBXBuildFile section */
@@ -19,7 +18,6 @@
 		FAC2F2C818EEA7DF00AF364F /* Promyk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Promyk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC2F2D318EEA7DF00AF364F /* Promyk-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Promyk-Info.plist"; sourceTree = "<group>"; };
 		FAC2F2D718EEA7DF00AF364F /* Promyk.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Promyk.m; sourceTree = "<group>"; };
-		FAC2F30018EEBB5800AF364F /* MODERNE SANS.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MODERNE SANS.ttf"; sourceTree = "<group>"; };
 		FAEAFF8E198A71B700B21CF5 /* Sun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sun.h; sourceTree = "<group>"; };
 		FAEAFF8F198A71B700B21CF5 /* Sun.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Sun.m; sourceTree = "<group>"; };
 		FAEAFF91198A730100B21CF5 /* sunmath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sunmath.h; sourceTree = "<group>"; };
@@ -46,7 +44,6 @@
 				FAEAFF91198A730100B21CF5 /* sunmath.h */,
 				FAEAFF92198A737A00B21CF5 /* sunmath.c */,
 				FAC2F2D318EEA7DF00AF364F /* Promyk-Info.plist */,
-				FAC2F30018EEBB5800AF364F /* MODERNE SANS.ttf */,
 				FA4B146F18EECB2000CD1D4F /* Media.xcassets */,
 				FAC2F2C918EEA7DF00AF364F /* Products */,
 			);
@@ -119,7 +116,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA4B147018EECB2000CD1D4F /* Media.xcassets in Resources */,
-				FAC2F30118EEBB5800AF364F /* MODERNE SANS.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

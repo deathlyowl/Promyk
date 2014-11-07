@@ -15,8 +15,8 @@
 #define DASH_PATTERN @[@LINE_WIDTH,@LINE_WIDTH]
 #define ANIMATION_DURATION 1
 #define YELLOW [UIColor colorWithHue:0.16f saturation:0.51f brightness:1.00f alpha:1.00f]
-#define FONT [UIFont fontWithName:@"ModernSans" size:50]
-#define INFO_FONT [UIFont fontWithName:@"ModernSans" size:22]
+#define FONT [UIFont fontWithName:@"Futura-Medium" size:50]
+#define INFO_FONT [UIFont fontWithName:@"Futura-Medium" size:22]
 #define BECOME_ACTIVE @"Become active"
 #define RESIGN_ACTIVE @"Resign active"
 #define ACTION_URL @"http://deathlyowl.com"
@@ -168,10 +168,30 @@ int main(int argc, char * argv[])
 
 - (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event
 {
+/*
+    UIGraphicsBeginImageContextWithOptions(self.view.frame.size, NO, [[UIScreen mainScreen] scale]);
+    
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
+    [[UIColor clearColor] set];
+    CGContextFillRect(ctx, self.view.frame);
+    
+    [self.view setOpaque:NO];
+    [self.view.layer setOpaque:NO];
+    [self.view setBackgroundColor:[UIColor clearColor]];
+    [self.view.layer setBackgroundColor:[UIColor clearColor].CGColor];
+    
+    [self.view.layer renderInContext:ctx];
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    
+    [UIImagePNGRepresentation(image) writeToFile:@"/Users/xehivs/Desktop/ss.png"
+                                      atomically:YES];
+*/
+    
     if (motion == UIEventSubtypeMotionShake)
     {
         [(AppDelegate *)[[UIApplication sharedApplication] delegate] locate];
-    } 
+    }
 }
 
 - (void) tick
@@ -288,7 +308,6 @@ int main(int argc, char * argv[])
     [sun setStrokeColor:YELLOW.CGColor];
     [sun setFillColor:[UIColor blackColor].CGColor];
     [sun setLineWidth:LINE_WIDTH];
-    
     [sun setPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(-SMALL_UNIT*6 -LINE_WIDTH,-LINE_WIDTH,
                                                                    LINE_WIDTH*2,
                                                                    LINE_WIDTH*2)].CGPath];
@@ -342,6 +361,13 @@ int main(int argc, char * argv[])
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:YES];
+    [self performSelector:@selector(startTicker)
+               withObject:nil
+               afterDelay:.5];
+}
+
+- (void) startTicker
+{
     [[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(tick) userInfo:nil repeats:YES] fire];
 }
 
@@ -391,9 +417,10 @@ int main(int argc, char * argv[])
     }
     
     NSDateFormatter *dateFormatter = NSDateFormatter.new;
-    [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"EN"]];
+//    [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"EN"]];
     [dateFormatter setDateFormat:@"EEEE"];
-    return [dateFormatter stringFromDate:NSDate.date];
+    
+    return [[dateFormatter stringFromDate:NSDate.date] capitalizedString];
 }
 
 - (void) setAngle
@@ -403,13 +430,14 @@ int main(int argc, char * argv[])
     //angle = 45;
     
     [CATransaction setAnimationDuration:ANIMATION_DURATION];
+    
     CATransform3D transform = CATransform3DMakeRotation(angle * M_PI / 180, 0, 0, 1);
     
     handSolid.transform = transform;
     handDashed.transform = transform;
     [angleLabel setText:[NSString stringWithFormat:@"%.0f°", angle]];
     
-    [angleLabel.layer setFrame:CGRectMake(angle > 0 ? BIG_UNIT+10 : BIG_UNIT,
+    [angleLabel.layer setFrame:CGRectMake(angle > 0 ? BIG_UNIT + 15 : BIG_UNIT+15,
                                           angle > 0 ? self.view.center.y + SMALL_UNIT : self.view.center.y - 3 * SMALL_UNIT,
                                           2*BIG_UNIT,
                                           2.5*SMALL_UNIT)];
@@ -453,7 +481,7 @@ int main(int argc, char * argv[])
     [infoLabel setFrame:CGRectMake(20, 20, self.view.frame.size.width-40, (self.view.frame.size.height-40)*.7)];
     [infoLabel setNumberOfLines:0];
     
-    [infoLabel setText:@"It's a clock providing the current angle of sunrays hitting your spot on Earth.\n\nPromyk means a little, warm sunray in Polish."];
+    [infoLabel setText:@"It's a clock which provides the current angle of sunrays hitting your spot on Earth.\n\nPromyk means a little, warm sunray in Polish."];
     
     UIButton *authorLabel = [[UIButton alloc] initWithFrame:CGRectMake(20, self.view.frame.size.height*.7 - 20, 280, 20)];
     [authorLabel setTitle:@"more at Deathly Owl"
